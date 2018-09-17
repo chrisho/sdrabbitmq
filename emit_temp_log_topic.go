@@ -5,7 +5,7 @@ import (
 )
 
 // 临时消息队列
-type emitTempLogTopic struct {
+type EmitTempLogTopic struct {
 	key string
 	q amqp.Queue
 	conn *amqp.Connection // 连接实例
@@ -19,7 +19,7 @@ type emitTempLogTopic struct {
 // @param exchange string 交换器名称
 // @param key string Routing Key
 // @return err error
-func (e *emitTempLogTopic) Publish(body string, exchange string, key string) (err error){
+func (e *EmitTempLogTopic) Publish(body string, exchange string, key string) (err error){
 	if e.ch == nil {
 		e.ch, err = channel(e.conn)
 		if err != nil {
@@ -40,7 +40,7 @@ func (e *emitTempLogTopic) Publish(body string, exchange string, key string) (er
 
 
 // 声明交换器
-func (e *emitTempLogTopic) exchangeDeclare() (err error) {
+func (e *EmitTempLogTopic) exchangeDeclare() (err error) {
 	err = e.ch.ExchangeDeclare(
 		e.exchange, // name
 		SDRabbitmqExchangeTypeTopic, // type
@@ -63,7 +63,7 @@ func (e *emitTempLogTopic) exchangeDeclare() (err error) {
 // @param body string 消息体
 // @param key string Routing Key
 // @return err error
-func (e *emitTempLogTopic) publish(body string) (err error) {
+func (e *EmitTempLogTopic) publish(body string) (err error) {
 	//forever := make(chan bool)
 	err = e.ch.Publish(
 		e.exchange,          // exchange
@@ -88,8 +88,8 @@ func (e *emitTempLogTopic) publish(body string) (err error) {
 // @param url string 连接rabbitmq服务器地址
 // @return e *emitLogTopic
 //         err error
-func NewEmitTempLogTopic(url string) (e *emitTempLogTopic, err error) {
-	e = &emitTempLogTopic{}
+func NewEmitTempLogTopic(url string) (e *EmitTempLogTopic, err error) {
+	e = &EmitTempLogTopic{}
 	e.conn, e.ch, err = connect(url)
 	if err != nil {
 		return nil, err
@@ -103,8 +103,8 @@ func NewEmitTempLogTopic(url string) (e *emitTempLogTopic, err error) {
 // @param conn *amqp.Connection 已定义连接，用于共享连接
 // @return e *emitLogTopic
 //         err error
-func NewEmitTempLogTopicWithConn(conn *amqp.Connection) (e *emitTempLogTopic, err error) {
-	e = &emitTempLogTopic{}
+func NewEmitTempLogTopicWithConn(conn *amqp.Connection) (e *EmitTempLogTopic, err error) {
+	e = &EmitTempLogTopic{}
 	e.conn = conn
 	e.ch, err = channel(e.conn)
 	if err != nil {

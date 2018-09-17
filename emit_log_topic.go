@@ -4,7 +4,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type emitLogTopic struct {
+type EmitLogTopic struct {
 	key string
 	q amqp.Queue
 	conn *amqp.Connection // 连接实例
@@ -18,7 +18,7 @@ type emitLogTopic struct {
 // @param exchange string 交换器名称
 // @param key string Routing Key
 // @return err error
-func (e *emitLogTopic) Publish(body string, exchange string, key string) (err error){
+func (e *EmitLogTopic) Publish(body string, exchange string, key string) (err error){
 	if e.ch == nil {
 		e.ch, err = channel(e.conn)
 		if err != nil {
@@ -49,7 +49,7 @@ func (e *emitLogTopic) Publish(body string, exchange string, key string) (err er
 
 
 // 声明交换器
-func (e *emitLogTopic) exchangeDeclare() (err error) {
+func (e *EmitLogTopic) exchangeDeclare() (err error) {
 	err = e.ch.ExchangeDeclare(
 		e.exchange, // name
 		SDRabbitmqExchangeTypeTopic, // type
@@ -68,7 +68,7 @@ func (e *emitLogTopic) exchangeDeclare() (err error) {
 
 
 // 声明持久化队列
-func (e *emitLogTopic) queueDeclare() (err error) {
+func (e *EmitLogTopic) queueDeclare() (err error) {
 	e.q, err = e.ch.QueueDeclare(
 		 e.exchange+".queue",
 		true,
@@ -86,7 +86,7 @@ func (e *emitLogTopic) queueDeclare() (err error) {
 
 
 // 绑定消息队列
-func (e *emitLogTopic) queueBind() (err error) {
+func (e *EmitLogTopic) queueBind() (err error) {
 	err = e.ch.QueueBind(
 		e.q.Name,       // queue name
 		e.key,   // routing key
@@ -105,7 +105,7 @@ func (e *emitLogTopic) queueBind() (err error) {
 // @param body string 消息体
 // @param key string Routing Key
 // @return err error
-func (e *emitLogTopic) publish(body string) (err error) {
+func (e *EmitLogTopic) publish(body string) (err error) {
 	//forever := make(chan bool)
 	err = e.ch.Publish(
 		e.exchange,          // exchange
@@ -130,8 +130,8 @@ func (e *emitLogTopic) publish(body string) (err error) {
 // @param url string 连接rabbitmq服务器地址
 // @return e *emitLogTopic
 //         err error
-func NewEmitLogTopic(url string) (e *emitLogTopic, err error) {
-	e = &emitLogTopic{}
+func NewEmitLogTopic(url string) (e *EmitLogTopic, err error) {
+	e = &EmitLogTopic{}
 	e.conn, e.ch, err = connect(url)
 	if err != nil {
 		return nil, err
@@ -145,8 +145,8 @@ func NewEmitLogTopic(url string) (e *emitLogTopic, err error) {
 // @param conn *amqp.Connection 已定义连接，用于共享连接
 // @return e *emitLogTopic
 //         err error
-func NewEmitLogTopicWithConn(conn *amqp.Connection) (e *emitLogTopic, err error) {
-	e = &emitLogTopic{}
+func NewEmitLogTopicWithConn(conn *amqp.Connection) (e *EmitLogTopic, err error) {
+	e = &EmitLogTopic{}
 	e.conn = conn
 	e.ch, err = channel(e.conn)
 	if err != nil {

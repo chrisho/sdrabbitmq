@@ -4,7 +4,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type receiveLogsTopic struct {
+type ReceiveLogsTopic struct {
 	conn *amqp.Connection  // 连接
 	ch *amqp.Channel  // 管道
 	q amqp.Queue  // 队列
@@ -16,7 +16,7 @@ type receiveLogsTopic struct {
 // @param exchange string 交换器名称
 // @return <-chan amqp.Delivery 交付实例
 //         error
-func (r *receiveLogsTopic) GetMsgs(exchange string) (<-chan amqp.Delivery, error) {
+func (r *ReceiveLogsTopic) GetMsgs(exchange string) (<-chan amqp.Delivery, error) {
 	r.exchange = exchange
 	err := r.exchangeDeclare()
 	if err != nil {
@@ -41,7 +41,7 @@ func (r *receiveLogsTopic) GetMsgs(exchange string) (<-chan amqp.Delivery, error
 // @param msg string 消息内容body
 // @param key string Routing Key
 // @return err error
-func (r *receiveLogsTopic) Replay(msg string, key string) (err error){
+func (r *ReceiveLogsTopic) Replay(msg string, key string) (err error){
 	e, err := NewEmitLogTopicWithConn(r.conn)
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ func (r *receiveLogsTopic) Replay(msg string, key string) (err error){
 
 
 // 声明交换器
-func (r *receiveLogsTopic) exchangeDeclare() (err error) {
+func (r *ReceiveLogsTopic) exchangeDeclare() (err error) {
 	err = r.ch.ExchangeDeclare(
 		r.exchange, // name
 		SDRabbitmqExchangeTypeTopic, // type
@@ -71,7 +71,7 @@ func (r *receiveLogsTopic) exchangeDeclare() (err error) {
 
 
 // 声明消息队列
-func (r *receiveLogsTopic) queueDeclare() (err error) {
+func (r *ReceiveLogsTopic) queueDeclare() (err error) {
 	r.q, err = r.ch.QueueDeclare(
 		 r.exchange+".queue",
 		true,
@@ -89,7 +89,7 @@ func (r *receiveLogsTopic) queueDeclare() (err error) {
 
 
 // 绑定消息队列
-func (r *receiveLogsTopic) queueBind() (err error) {
+func (r *ReceiveLogsTopic) queueBind() (err error) {
 	err = r.ch.QueueBind(
 		r.q.Name,       // queue name
 		SDRabbitmqRoutingKeyProducer,   // routing key
@@ -107,7 +107,7 @@ func (r *receiveLogsTopic) queueBind() (err error) {
 // 消费消息队列
 // @return msgs <-chan amqp.Delivery 消息交付实例
 //         err error
-func (r *receiveLogsTopic) consume() (msgs <-chan amqp.Delivery, err error) {
+func (r *ReceiveLogsTopic) consume() (msgs <-chan amqp.Delivery, err error) {
 	msgs, err = r.ch.Consume(
 		r.q.Name, // queue
 		"",     // consumer
@@ -125,18 +125,18 @@ func (r *receiveLogsTopic) consume() (msgs <-chan amqp.Delivery, err error) {
 
 
 // 关闭连接，关闭管道
-func (r *receiveLogsTopic) Close() {
+func (r *ReceiveLogsTopic) Close() {
 	r.conn.Close()
 	r.ch.Close()
 }
 
 
-// NewReceiveLogsTopic 实例化receiveLogsTopic
+// NewReceiveLogsTopic 实例化ReceiveLogsTopic
 // @param url string 连接rabbitmq服务器地址
-// @return r *receiveLogsTopic
+// @return r *ReceiveLogsTopic
 //         err error
-func NewReceiveLogsTopic(url string) (r *receiveLogsTopic, err error) {
-	r = &receiveLogsTopic{}
+func NewReceiveLogsTopic(url string) (r *ReceiveLogsTopic, err error) {
+	r = &ReceiveLogsTopic{}
 	r.conn, r.ch, err = connect(url)
 	if err != nil {
 		return nil, err
@@ -146,12 +146,12 @@ func NewReceiveLogsTopic(url string) (r *receiveLogsTopic, err error) {
 }
 
 
-// NewReceiveLogsTopicWithConn 实例化receiveLogsTopic
+// NewReceiveLogsTopicWithConn 实例化ReceiveLogsTopic
 // @param conn *amqp.Connection 已定义连接，用于共享连接
-// @return r *receiveLogsTopic
+// @return r *ReceiveLogsTopic
 //         err error
-func NewReceiveLogsTopicWithConn(conn *amqp.Connection) (r *receiveLogsTopic, err error) {
-	r = &receiveLogsTopic{}
+func NewReceiveLogsTopicWithConn(conn *amqp.Connection) (r *ReceiveLogsTopic, err error) {
+	r = &ReceiveLogsTopic{}
 	r.ch, err = channel(conn)
 	if err != nil {
 		return nil, err
