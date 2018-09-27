@@ -73,7 +73,7 @@ func (r *ReceiveLogsTopic) exchangeDeclare() (err error) {
 // 声明消息队列
 func (r *ReceiveLogsTopic) queueDeclare() (err error) {
 	r.q, err = r.ch.QueueDeclare(
-		 r.exchange+".queue",
+		 r.exchange,
 		true,
 		false,
 		false,

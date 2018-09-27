@@ -70,7 +70,7 @@ func (e *EmitLogTopic) exchangeDeclare() (err error) {
 // 声明持久化队列
 func (e *EmitLogTopic) queueDeclare() (err error) {
 	e.q, err = e.ch.QueueDeclare(
-		 e.exchange+".queue",
+		 e.exchange+".callback",
 		true,
 		false,
 		false,
