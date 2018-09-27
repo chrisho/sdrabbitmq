@@ -2,6 +2,7 @@ package sdrabbitmq
 
 import (
 	"github.com/streadway/amqp"
+	"fmt"
 )
 
 
@@ -10,9 +11,10 @@ import (
 // @return conn *amqp.Connection 连接实例
 //         ch *amqp.Channel 管道实例
 //         err error
-func connect(url string) (conn *amqp.Connection, ch *amqp.Channel, err error) {
+func connect(rabbitHostPort string, rabbitUsername string, rabbitPassword string) (conn *amqp.Connection, ch *amqp.Channel, err error) {
 
-	conn, err = amqp.Dial(url)
+	dsn := fmt.Sprintf("amqp://%s:%s@%s", rabbitUsername, rabbitPassword, rabbitHostPort)
+	conn, err = amqp.Dial(dsn)
 	if err != nil {
 		return nil, nil, failOnError("Failed to connect", err)
 	}

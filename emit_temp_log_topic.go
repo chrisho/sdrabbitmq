@@ -88,9 +88,9 @@ func (e *EmitTempLogTopic) publish(body string) (err error) {
 // @param url string 连接rabbitmq服务器地址
 // @return e *emitLogTopic
 //         err error
-func NewEmitTempLogTopic(url string) (e *EmitTempLogTopic, err error) {
+func NewEmitTempLogTopic(hostPort string, username string, password string) (e *EmitTempLogTopic, err error) {
 	e = &EmitTempLogTopic{}
-	e.conn, e.ch, err = connect(url)
+	e.conn, e.ch, err = connect(hostPort, username, password)
 	if err != nil {
 		return nil, err
 	}

@@ -135,9 +135,9 @@ func (r *ReceiveTempLogsTopic) Close() {
 // @param url string 连接rabbitmq服务器地址
 // @return r *receiveLogsTopic
 //         err error
-func NewReceiveTempLogsTopic(url string) (r *ReceiveTempLogsTopic, err error) {
+func NewReceiveTempLogsTopic(hostPort string, username string, password string) (r *ReceiveTempLogsTopic, err error) {
 	r = &ReceiveTempLogsTopic{}
-	r.conn, r.ch, err = connect(url)
+	r.conn, r.ch, err = connect(hostPort, username, password)
 	if err != nil {
 		return nil, err
 	}
