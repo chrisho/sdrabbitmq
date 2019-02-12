@@ -16,14 +16,14 @@ type ReceiveLogsTopic struct {
 // @param exchange string 交换器名称
 // @return <-chan amqp.Delivery 交付实例
 //         error
-func (r *ReceiveLogsTopic) GetMsgs(exchange string) (<-chan amqp.Delivery, error) {
+func (r *ReceiveLogsTopic) GetMsgs(exchange string, durable bool) (<-chan amqp.Delivery, error) {
 	r.exchange = exchange
-	err := r.exchangeDeclareWithParams(true)
+	err := r.exchangeDeclareWithParams(durable)
 	if err != nil {
 		return nil, err
 	}
 
-	err = r.queueDeclareWithParams(true)
+	err = r.queueDeclareWithParams(durable)
 	if err != nil {
 		return nil, err
 	}

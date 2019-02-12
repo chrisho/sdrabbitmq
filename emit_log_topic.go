@@ -33,7 +33,7 @@ func (e *EmitLogTopic) Publish(body string, exchange string, key string, durable
 		return err
 	}
 
-	err = e.queueDeclareWithParams(true)
+	err = e.queueDeclareWithParams(durable)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,8 @@ func (e *EmitLogTopic) queueDeclare() (err error) {
 // 声明持久化队列参数设置
 func (e *EmitLogTopic) queueDeclareWithParams(durable bool) (err error) {
 	e.q, err = e.ch.QueueDeclare(
-		e.exchange+".callback",
+		//e.exchange+".callback",
+		e.exchange,
 		durable,
 		false,
 		false,
