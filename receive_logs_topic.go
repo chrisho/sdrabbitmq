@@ -18,12 +18,12 @@ type ReceiveLogsTopic struct {
 //         error
 func (r *ReceiveLogsTopic) GetMsgs(exchange string) (<-chan amqp.Delivery, error) {
 	r.exchange = exchange
-	err := r.exchangeDeclare()
+	err := r.exchangeDeclareWithParams(true)
 	if err != nil {
 		return nil, err
 	}
 
-	err = r.queueDeclare()
+	err = r.queueDeclareWithParams(true)
 	if err != nil {
 		return nil, err
 	}
