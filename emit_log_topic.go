@@ -18,7 +18,7 @@ type EmitLogTopic struct {
 // @param exchange string 交换器名称
 // @param key string Routing Key
 // @return err error
-func (e *EmitLogTopic) Publish(body string, exchange string, key string) (err error){
+func (e *EmitLogTopic) Publish(body string, exchange string, key string, durable bool) (err error){
 	if e.ch == nil {
 		e.ch, err = channel(e.conn)
 		if err != nil {
@@ -28,12 +28,12 @@ func (e *EmitLogTopic) Publish(body string, exchange string, key string) (err er
 
 	e.key = key
 	e.exchange = exchange
-	err = e.exchangeDeclare()
+	err = e.exchangeDeclareWithParams(durable)
 	if err != nil {
 		return err
 	}
 
-	err = e.queueDeclare()
+	err = e.queueDeclareWithParams(true)
 	if err != nil {
 		return err
 	}
@@ -50,10 +50,14 @@ func (e *EmitLogTopic) Publish(body string, exchange string, key string) (err er
 
 // 声明交换器
 func (e *EmitLogTopic) exchangeDeclare() (err error) {
+	return e.exchangeDeclareWithParams(false)
+}
+// 声明交换器参数设置
+func (e *EmitLogTopic) exchangeDeclareWithParams(durable bool) (err error) {
 	err = e.ch.ExchangeDeclare(
 		e.exchange, // name
 		SDRabbitmqExchangeTypeTopic, // type
-		false,        // durable
+		durable,        // durable
 		false,        // auto-deleted
 		false,        // internal
 		false,        // no-wait
@@ -69,9 +73,13 @@ func (e *EmitLogTopic) exchangeDeclare() (err error) {
 
 // 声明持久化队列
 func (e *EmitLogTopic) queueDeclare() (err error) {
+	return e.queueDeclareWithParams(false)
+}
+// 声明持久化队列参数设置
+func (e *EmitLogTopic) queueDeclareWithParams(durable bool) (err error) {
 	e.q, err = e.ch.QueueDeclare(
-		 e.exchange+".callback",
-		true,
+		e.exchange+".callback",
+		durable,
 		false,
 		false,
 		false,
