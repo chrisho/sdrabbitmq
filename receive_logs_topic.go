@@ -132,9 +132,6 @@ func (r *ReceiveLogsTopic) consume() (msgs <-chan amqp.Delivery, err error) {
 
 // 关闭连接，关闭管道
 func (r *ReceiveLogsTopic) Close() {
-	if r.conn != nil {
-		r.conn.Close()
-	}
 	r.ch.Close()
 }
 
