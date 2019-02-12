@@ -50,10 +50,14 @@ func (e *EmitLogTopic) Publish(body string, exchange string, key string) (err er
 
 // 声明交换器
 func (e *EmitLogTopic) exchangeDeclare() (err error) {
+	return e.exchangeDeclareWithParams(false)
+}
+// 声明交换器参数设置
+func (e *EmitLogTopic) exchangeDeclareWithParams(durable bool) (err error) {
 	err = e.ch.ExchangeDeclare(
 		e.exchange, // name
 		SDRabbitmqExchangeTypeTopic, // type
-		false,        // durable
+		durable,        // durable
 		false,        // auto-deleted
 		false,        // internal
 		false,        // no-wait
