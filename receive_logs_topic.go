@@ -159,7 +159,9 @@ func NewReceiveLogsTopic(hostPort string, username string, password string) (r *
 // @return r *ReceiveLogsTopic
 //         err error
 func NewReceiveLogsTopicWithConn(conn *amqp.Connection) (r *ReceiveLogsTopic, err error) {
-	r = &ReceiveLogsTopic{}
+	r = &ReceiveLogsTopic{
+		conn: conn,
+	}
 	r.ch, err = channel(conn)
 	if err != nil {
 		return nil, err
