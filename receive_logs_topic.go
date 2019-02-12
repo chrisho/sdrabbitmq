@@ -50,13 +50,16 @@ func (r *ReceiveLogsTopic) Replay(msg string, key string) (err error){
 	return
 }
 
-
 // 声明交换器
 func (r *ReceiveLogsTopic) exchangeDeclare() (err error) {
+	return r.exchangeDeclareWithParams(false)
+}
+// 声明交换器
+func (r *ReceiveLogsTopic) exchangeDeclareWithParams(durable bool) (err error) {
 	err = r.ch.ExchangeDeclare(
 		r.exchange, // name
 		SDRabbitmqExchangeTypeTopic, // type
-		false,        // durable
+		durable,        // durable
 		false,        // auto-deleted
 		false,        // internal
 		false,        // no-wait
@@ -69,12 +72,15 @@ func (r *ReceiveLogsTopic) exchangeDeclare() (err error) {
 	return
 }
 
-
-// 声明消息队列
+// 声明持久化队列
 func (r *ReceiveLogsTopic) queueDeclare() (err error) {
+	return r.queueDeclareWithParams(false)
+}
+// 声明消息队列
+func (r *ReceiveLogsTopic) queueDeclareWithParams(durable bool) (err error) {
 	r.q, err = r.ch.QueueDeclare(
 		 r.exchange,
-		true,
+		durable,
 		false,
 		false,
 		false,
