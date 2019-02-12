@@ -46,7 +46,7 @@ func (r *ReceiveLogsTopic) Replay(msg string, key string) (err error){
 	if err != nil {
 		return err
 	}
-	e.Publish(msg, r.exchange, key, true)
+	e.Publish(msg, r.exchange+".callback", key, true)
 	return
 }
 
